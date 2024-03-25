@@ -1,63 +1,60 @@
+from gym import spaces
+import numpy as np
 import random
-import numpy as np 
-import matplotlib.pyplot as plt
-import copy
-from enum import Enum
 
-class Action(Enum):
-    hit = 0
-    stick = 0
-    
-    @staticmethod
-    def to_action(n):
-        return Action.hit  if n==0 else Action.stick 
-    
-    @staticmethod
-    def as_int(a):
-        return 0 if a==Action.hit else 1
 
-class Card :
-    def __init__(self, force_black= False) :
-        self.value = random.randint(1,10)
-        if force_black or random.randint(1,3)!= 3 :
-            self.is_black = True
-        else: 
-            self.is_black = False
-            self.value = - self.value
-            
-class State(object):
-    def __init__(self, dealer=0, agent=0, is_terminal=False):
-        self.dealer = dealer
-        self.agent = agent
-        self.is_terminal = is_terminal
-        
-class Environment : 
-    def __init__(self) -> None:
-        self.dealer_value_count = 10 ,
-        self.player_value_count = 21 ,
-        self.action_count = 2 # hit or stick 
+class Easy21(object):
+    def __init__(self):
+        # 2 actions: 0-hits, 1-sticks
+        self.action_space = spaces.Discrete(2)
+        self.observation_space = spaces.MultiDiscrete([[1, 10], [1, 21]])
+        self.state = None
 
-    def step(self, state, action):
-#        new_state = state does not work because modifying new_state will influence state
-        new_state = copy.copy(state)
-        reward = 0
-        if action == Action.hit:
-            new_state.player  += Card().value
-            if new_state.player > 21 or new_state.player <1:
-                new_state.is_terminal = True
-                reward = -1
-                return new_state, reward
-        elif action == Action.stick:
-            while not new_state.is_terminal:
-                new_state.dealer += Card().value
-                if new_state.dealer > 21 or  new_state.dealer < 1:
-                    new_state.is_terminal = True
-                    reward = 1
-                elif new_state.dealer> 17:
-                    new_state.is_terminal = True
-                    if new_state.player > new_state.dealer:
-                        reward = 1
-                    elif new_state.player < new_state.dealer:
-                        reward = -1
-        return new_state, reward
-              
+    def reset(self):
+        player_card = np.random.randint(1, 11)
+        dealer_card = np.random.randint(1, 11)
+        self.state = (dealer_card, player_card)
+        return np.array(self.state)
+
+    def get_card(self):
+        card = np.random.randint(1, 11)
+        if random.random() < 2.0/3:
+            return card
+        else:
+            return -card
+
+    def step(self, action):
+        dealer_card_up, player_sum = self.state
+        if action == 0:
+            player_sum += self.get_card()
+            self.state = (dealer_card_up, player_sum)
+            if player_sum > 21 or player_sum < 1:
+                return self.state, -1.0, True, None
+            return self.state, 0, False, None
+        if action == 1:
+            dealer_sum = dealer_card_up
+            while True:
+                dealer_sum += self.get_card()
+                if dealer_sum > 21 or dealer_sum < 1:
+                    return self.state, 1.0, True, None
+                if dealer_sum >= 17:
+                    if dealer_sum > player_sum:
+                        return self.state, -1.0, True, None
+                    elif dealer_sum < player_sum:
+                        return self.state, 1.0, True, None
+                    else:
+                        return self.state, 0, True, None
+
+
+if __name__ == '__main__':
+    env = Easy21()
+    win = 0
+    for i in range(100):
+        state = env.reset()
+        while True:
+            state, reward, done, _ = env.step(np.random.randint(2))
+            if done:
+                if reward > 0:
+                    win += 1
+                break
+    print ("win", win)
