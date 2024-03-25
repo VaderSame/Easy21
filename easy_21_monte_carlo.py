@@ -1,3 +1,5 @@
+# easy21 with monte carlo
+
 from easy21 import Easy21
 import numpy as np
 import matplotlib.pyplot as plt
@@ -74,6 +76,6 @@ class MonteCarloControl(object):
 if __name__ == '__main__':
     mc = MonteCarloControl()
     mc.train(1000000)
-    f = open('q_value.pkl', 'wb')
+    f = open('q_value.pkl', 'wb') #save the model 
     pickle.dump(mc.q_value, f)
     mc.plot_state_value()
