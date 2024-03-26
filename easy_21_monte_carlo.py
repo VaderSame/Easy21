@@ -13,15 +13,15 @@ class MonteCarloControl(object):
     def __init__(self):
         self.q_value = np.zeros((10, 21, 2))
         self.count = np.zeros((10, 21, 2))
-        self.constant = 100.0
-        self.env = Easy21()
+        self.constant = 100.0  #exploration constant  - controls the rate of exploration
+        self.env = Easy21() #initiates the environment 
 
     def epsilon_greedy_action(self, state):
         dealer_card, player_sum = state
         dealer_card -= 1
         player_sum -= 1
         state_count = np.sum(self.count[dealer_card, player_sum, :])
-        epsilon = self.constant / (self.constant + state_count)
+        epsilon = self.constant / (self.constant + state_count) #epsilon value for epsilon greedy exploration
         if random.random() < epsilon:
             return np.random.randint(2)
         else:
