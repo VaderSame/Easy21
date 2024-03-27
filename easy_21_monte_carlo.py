@@ -18,14 +18,17 @@ class MonteCarloControl(object):
 
     def epsilon_greedy_action(self, state):
         dealer_card, player_sum = state
-        dealer_card -= 1
+        # arrays are zero-indexed, meaning the first element is at index 0
+        dealer_card -= 1 
         player_sum -= 1
         state_count = np.sum(self.count[dealer_card, player_sum, :])
+        # When the state has not been visited much , epsilon will be relatively high, encouraging more exploration.
+        # As the state is visited more frequently, epsilon decreases, favoring exploitation of learned Q-values.
         epsilon = self.constant / (self.constant + state_count) #epsilon value for epsilon greedy exploration
         if random.random() < epsilon:
             return np.random.randint(2)
         else:
-            return np.argmax(self.q_value[dealer_card, player_sum, :])
+            return np.argmax(self.q_value[dealer_card, player_sum, :]) # selects the action with the highest Q-value for the current state (exploitation)
 
     def update_q_value(self, state, action, reward):
         dealer_card, player_sum = state
@@ -35,7 +38,7 @@ class MonteCarloControl(object):
         self.q_value[dealer_card, player_sum, action] += alpha * (reward - self.q_value[dealer_card, player_sum, action])
 
     def train(self, iteration=10000):
-        count_win = 0
+        count_win = 0 # counter to track agent's win 
         for i in range(iteration):
             trajectory = []
             total_reward = 0
