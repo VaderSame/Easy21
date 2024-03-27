@@ -1,16 +1,8 @@
-from gym import spaces  #https://www.gymlibrary.dev/api/spaces/
 import numpy as np
 import random
 
-
 class Easy21(object):
     def __init__(self):
-        # 2 actions: 0-hits, 1-sticks
-        self.action_space = spaces.Discrete(2)
-        # observation space with two dimensions. 
-        # The first dimension represents the dealer's card (values from 1 to 10), 
-        # and the second dimension represents the player's sum (values from 1 to 21).
-        self.observation_space = spaces.MultiDiscrete([[1, 10], [1, 21]])
         self.state = None
 
     def reset(self):
@@ -47,17 +39,4 @@ class Easy21(object):
                         return self.state, 1.0, True, None
                     else:
                         return self.state, 0, True, None
-
-
-if __name__ == '__main__':
-    env = Easy21()
-    win = 0
-    for i in range(100):
-        state = env.reset()
-        while True:
-            state, reward, done, _ = env.step(np.random.randint(2))
-            if done:
-                if reward > 0:
-                    win += 1
-                break
-    print ("win", win)
+        return self.state, dealer_sum , player_sum       
