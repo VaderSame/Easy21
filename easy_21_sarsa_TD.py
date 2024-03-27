@@ -63,7 +63,7 @@ class Sarsa(object):
         return mses
 
 if __name__ == '__main__':
-    f = open("q_value.pkl", 'rb')
+    f = open("monte_carlo.pkl", 'rb')
     q_optimal_value = pickle.load(f)
 
     lambdas = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]

@@ -81,6 +81,6 @@ class MonteCarloControl(object):
 if __name__ == '__main__':
     mc = MonteCarloControl()
     mc.train(1000000)
-    f = open('q_value.pkl', 'wb') #save the model 
+    f = open('monte_carlo.pkl', 'wb') #save the model 
     pickle.dump(mc.q_value, f)
     mc.plot_state_value()
