@@ -67,10 +67,12 @@ class MonteCarloControl(object):
         Z = np.max(self.q_value, axis=2)
         X, Y = np.meshgrid(Y, X)
         ax.plot_wireframe(X, Y, Z, rstride=1, cstride=1)
-        # surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+        surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False)
         ax.set_xlabel('player sum')
         ax.set_ylabel('dealer showing')
         ax.set_zlabel('reward')
+        # Customize the surface plot if needed
+        surf.set_edgecolor('black')  
         plt.show()
 
 if __name__ == '__main__':
