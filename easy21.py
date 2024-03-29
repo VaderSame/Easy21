@@ -24,19 +24,19 @@ class Easy21(object):
             player_sum += self.get_card()
             self.state = (dealer_card_up, player_sum)
             if player_sum > 21 or player_sum < 1:
-                return self.state, -1.0, True, None
-            return self.state, 0, False, None
+                return self.state, -1.0, True
+            return self.state, 0, False
         if action == 1: #stick
             dealer_sum = dealer_card_up
             while True:
                 dealer_sum += self.get_card()
                 if dealer_sum > 21 or dealer_sum < 1:
-                    return self.state, 1.0, True, None
+                    return self.state, 1.0, True
                 if dealer_sum >= 17:
                     if dealer_sum > player_sum:
-                        return self.state, -1.0, True, None
+                        return self.state, -1.0, True
                     elif dealer_sum < player_sum:
-                        return self.state, 1.0, True, None
+                        return self.state, 1.0, True
                     else:
-                        return self.state, 0, True, None
+                        return self.state, 0, True
         return self.state, dealer_sum , player_sum       
