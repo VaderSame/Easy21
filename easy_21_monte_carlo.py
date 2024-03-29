@@ -47,7 +47,7 @@ class MonteCarloControl(object):
             trajectory.append((state, action))
             self.count[state[0] - 1, state[1] - 1, action] += 1
             while True:
-                state, reward, done, _ = self.env.step(action)
+                state, reward, done = self.env.step(action)
                 total_reward += reward
                 if done:
                     if reward > 0:
