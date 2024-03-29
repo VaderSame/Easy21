@@ -42,7 +42,7 @@ class Sarsa(object):
             action = self.epsilon_greedy_action(state)
             self.count[state[0] - 1, state[1] - 1, action] += 1
             while True:
-                next_state, reward, done, _ = self.env.step(action)
+                next_state, reward, done = self.env.step(action)
                 if not done:
                     next_action = self.epsilon_greedy_action(next_state)
                 else:
@@ -62,36 +62,49 @@ class Sarsa(object):
                 self.count[state[0] - 1, state[1] - 1, action] += 1
         return mses
 
+    
+    
 if __name__ == '__main__':
-    f = open("monte_carlo.pkl", 'rb')
-    q_optimal_value = pickle.load(f)
+        f = open("monte_carlo.pkl", 'rb')
+        q_optimal_value = pickle.load(f)
 
-    lambdas = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
-    all_mse = []
-    for l in lambdas:
-        print ("lambda", l)
-        td = Sarsa(l)
-        td.train()
-        mse = np.mean((q_optimal_value - td.q_value)**2)
-        all_mse.append(mse)
-    # fig = plt.figure()
-    # fig.suptitle("Sarsa")
-    # ax = fig.add_subplot(111)
-    # ax.plot(lambdas, all_mse)
-    # ax.set_xlabel("lambda")
-    # ax.set_ylabel("Mean Square Error")
-    # plt.show()
+        print("Select which graph to generate:")
+        print("1. Graph comparing different lambda values")
+        print("2. Graph comparing Sarsa with lambda=0 and lambda=1")
+        choice = input("Enter your choice (1 or 2): ")
 
-    td =Sarsa(0)
-    all_mse_1 = td.train(episode_number=10000, q_value=q_optimal_value, is_mse=True)
-    td = Sarsa(1.0)
-    all_mse_2 = td.train(episode_number=10000, q_value=q_optimal_value, is_mse=True)
-    fig = plt.figure()
-    fig.suptitle("Sarsa")
-    ax = fig.add_subplot(111)
-    ax.plot(range(1, len(all_mse_1)+1), all_mse_1, label="lambda=0")
-    ax.plot(range(1, len(all_mse_2) + 1), all_mse_2, label="lambda=1")
-    ax.set_xlabel("episode number")
-    ax.set_ylabel("Mean Square Error")
-    ax.legend()
-    plt.show()
+        if choice == '1':
+            lambdas = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+            all_mse = []
+            for l in lambdas:
+                print("lambda", l)
+                td = Sarsa(l)
+                td.train()
+                mse = np.mean((q_optimal_value - td.q_value)**2)
+                all_mse.append(mse)
+
+            fig = plt.figure()
+            fig.suptitle("Sarsa")
+            ax = fig.add_subplot(111)
+            ax.plot(lambdas, all_mse)
+            ax.set_xlabel("lambda")
+            ax.set_ylabel("Mean Square Error")
+            plt.show()
+
+        elif choice == '2':
+            td = Sarsa(0)
+            all_mse_1 = td.train(episode_number=10000, q_value=q_optimal_value, is_mse=True)
+            td = Sarsa(1.0)
+            all_mse_2 = td.train(episode_number=10000, q_value=q_optimal_value, is_mse=True)
+            fig = plt.figure()
+            fig.suptitle("Sarsa")
+            ax = fig.add_subplot(111)
+            ax.plot(range(1, len(all_mse_1)+1), all_mse_1, label="lambda=0")
+            ax.plot(range(1, len(all_mse_2) + 1), all_mse_2, label="lambda=1")
+            ax.set_xlabel("episode number")
+            ax.set_ylabel("Mean Square Error")
+            ax.legend()
+            plt.show()
+
+        else:
+            print("Invalid choice. Please enter either 1 or 2.")    
